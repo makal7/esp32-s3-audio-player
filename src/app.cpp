@@ -94,21 +94,26 @@ void App::selectMode(){
 }
 
 void App::mp3Player(){
-    delay(250);
+    vTaskDelay(250/portTICK_PERIOD_MS);
     createDirList("/");
     while(1){
         if(audio.getAudioCurrentTime() >= audio.getAudioFileDuration())
         {
-            do{
+            while(1){
                 selectedSong = 0;
                 selectSong();
                 if (digitalRead(BACK_SW) == HIGH)
                     break;
                 
                 delay(250);
+
+                //if selected file/directory is file then extit this loop 
+                if (fileList.at(selectedSong).isDirectory == false)
+                    break;
+
                 if (fileList.at(selectedSong).isDirectory)
                     createDirList(fileList.at(selectedSong).path);
-            } while(fileList.at(selectedSong).isDirectory);
+            }
 
             if (digitalRead(BACK_SW) == HIGH){
                 break;

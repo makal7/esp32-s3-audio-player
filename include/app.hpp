@@ -23,7 +23,6 @@ class App
     
     private:
         void init();
-        void initDisplay();
         void initAudio();
         void initSD();
         void initWifi();
