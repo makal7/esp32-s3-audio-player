@@ -24,7 +24,7 @@ void DisplayTools::drawPlayerMenu(std::string title, std::vector<File_> list, in
     display.drawUTF8(0,15,title.c_str());
     display.setFont(FONT_SMALL);
     display.drawUTF8(0, 15+11+4, list.at(selected).name.c_str());	
-    char buffer[64];
+    char buffer[32];
     sprintf(buffer,"%d / %d",audio.getAudioCurrentTime(),audio.getAudioFileDuration());
     display.drawUTF8(0,15+11+11+4,buffer);
     display.sendBuffer();

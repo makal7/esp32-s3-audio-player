@@ -6,7 +6,7 @@ void audioLoop(void* a) {
   while(1)
   {
     app.getAudio()->loop();
-    vTaskDelay(1/portTICK_PERIOD_MS);
+    vTaskDelay(1/portTICK_PERIOD_MS);  //watchdog timer
   }
 }
 

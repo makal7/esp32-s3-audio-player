@@ -28,8 +28,8 @@ void App::initWifi() {
     //nvs flash is used by wifi
     esp_err_t ret = nvs_flash_init();
     if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
-      ESP_ERROR_CHECK(nvs_flash_erase());
-      ret = nvs_flash_init();
+        ESP_ERROR_CHECK(nvs_flash_erase());
+        ret = nvs_flash_init();
     }
     ESP_ERROR_CHECK(ret);
 
@@ -39,9 +39,8 @@ void App::initWifi() {
     {
         display.clearBuffer();
         display.drawUTF8(0,11,"Connecting to wifi");
-        delay(500);
         display.sendBuffer();
-        delay(500);
+        vTaskDelay(100/portTICK_PERIOD_MS);
     }
 }
 
@@ -105,7 +104,7 @@ void App::mp3Player(){
                 if (digitalRead(BACK_SW) == HIGH)
                     break;
                 
-                delay(250);
+                vTaskDelay(250/portTICK_PERIOD_MS);
 
                 //if selected file/directory is file then extit this loop 
                 if (fileList.at(selectedSong).isDirectory == false)
@@ -120,7 +119,7 @@ void App::mp3Player(){
             }
 
             audio.connecttoFS(SD, fileList.at(selectedSong).path.c_str());
-            delay(1000);
+            vTaskDelay(1000/portTICK_PERIOD_MS);
         }
 
         displayTools.drawPlayerMenu("Playing:", fileList, selectedSong, display, audio);
@@ -166,7 +165,7 @@ void App::createDirList(std::string dir){
 }
 
 void App::onlineRadio(){
-    delay(250);
+    vTaskDelay(250/portTICK_PERIOD_MS);
     audio.setConnectionTimeout(2000,2000);
     while(1){
         selectRadio();
@@ -181,25 +180,24 @@ void App::onlineRadio(){
                 audio.stopSong();
                 break;
             }
-            delay(1);
+            vTaskDelay(1/portTICK_PERIOD_MS); // watchdog timer
         }
-        delay(500);
+        vTaskDelay(500/portTICK_PERIOD_MS);
 
     }
 }
 
 Audio* App::getAudio(){
-
     return &audio;
 }
 
 void App::selectRadio(){
     while (1){
         encoder.selectOption(selectedRadio, radioList.size()-1);
-        displayTools.drawDisplayMenu("Radio Explorer", radioList, selectedRadio, display);
+        displayTools.drawDisplayMenu("Select radio", radioList, selectedRadio, display);
         if (digitalRead(SW) == LOW || digitalRead(BACK_SW) == HIGH)
             return;
-  }
+    }
 }
 
 void App::createRadioList() {
@@ -212,6 +210,16 @@ void App::createRadioList() {
     radioList.push_back(radio);
 
     radio.name = "Rádio Express";
-    radio.path = "http://stream.bauermedia.sk/128.mp3?aw_0_req.gdpr=false&aw_0_1st.playerid=expres_web_desktop";
+    radio.path = "http://stream.bauermedia.sk/128.mp3";
     radioList.push_back(radio);
+
+    radio.name = "Rádio Melody";
+    radio.path = "http://stream.bauermedia.sk/melody-hi.mp3";
+    radioList.push_back(radio);
+
+    radio.name = "Europa 2";
+    radio.path = "http://stream.bauermedia.sk/europa2.mp3";
+    radioList.push_back(radio);
+
+    //more on https://myonlineradio.sk/, https://ukradiolive.com/, https://myonlineradio.de/ ...
 }
