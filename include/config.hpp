@@ -23,6 +23,7 @@
 
 // buttons
 #define BACK_SW 11
+#define PAUSE_SW 3
 
 // font
 #define FONT_BIG    u8g2_font_ncenR12_te

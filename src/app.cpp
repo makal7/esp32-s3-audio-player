@@ -56,6 +56,7 @@ void App::init() {
     //init buttons
     pinMode(SW, INPUT_PULLUP);
     pinMode(BACK_SW, INPUT_PULLDOWN);
+    pinMode(PAUSE_SW, INPUT_PULLDOWN);
 }
 
 void App::run(){
@@ -95,6 +96,7 @@ void App::selectMode(){
 void App::mp3Player(){
     vTaskDelay(250/portTICK_PERIOD_MS);
     createDirList("/");
+
     while(1){
         if(audio.getAudioCurrentTime() >= audio.getAudioFileDuration())
         {
@@ -126,6 +128,11 @@ void App::mp3Player(){
         
         if (digitalRead(BACK_SW) == HIGH)
             audio.setAudioPlayPosition(audio.getAudioFileDuration() + 2);
+
+        if (digitalRead(PAUSE_SW) == HIGH){
+            audio.pauseResume();
+            vTaskDelay(250/portTICK_PERIOD_MS);
+        }
     }
 }
 
@@ -180,7 +187,11 @@ void App::onlineRadio(){
                 audio.stopSong();
                 break;
             }
-            vTaskDelay(1/portTICK_PERIOD_MS); // watchdog timer
+
+            if (digitalRead(PAUSE_SW) == HIGH){
+                audio.pauseResume();
+                vTaskDelay(250/portTICK_PERIOD_MS);
+            }
         }
         vTaskDelay(500/portTICK_PERIOD_MS);
 
